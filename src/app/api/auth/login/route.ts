@@ -19,32 +19,50 @@ export const POST = async (req: NextRequest) => {
     }
 
 
-    const user = await db.select().from(userTable).where(eq(userTable.email, parsedData.data.email))
+    try {
+      const user = await db
+        .select()
+        .from(userTable)
+        .where(eq(userTable.email, parsedData.data.email));
 
-    if (user.length === 0) {
+      if (user.length === 0) {
         return NextResponse.json({
-            status: 400,
-            error: "invalid credentials"
-        })
-    }
+          status: 400,
+          error: "invalid credentials",
+        });
+      }
 
-    const validPassword = await new Argon2id().verify(user[0].hashedPassword, parsedData.data.password);
+      const validPassword = await new Argon2id().verify(
+        user[0].hashedPassword,
+        parsedData.data.password
+      );
 
-    if (!validPassword) {
+      if (!validPassword) {
         return NextResponse.json({
-            status: 400,
-            error: "Invalid credentials"
-        })
-    }
+          status: 400,
+          error: "Invalid credentials",
+        });
+      }
 
-    const session = await lucia.createSession(user[0].id, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+      const session = await lucia.createSession(user[0].id, {});
+      const sessionCookie = lucia.createSessionCookie(session.id);
+      cookies().set(
+        sessionCookie.name,
+        sessionCookie.value,
+        sessionCookie.attributes
+      );
 
-    revalidatePath("/", "layout");
+      revalidatePath("/", "layout");
 
-    return NextResponse.json({
+      return NextResponse.json({
         status: 200,
-        message: "success"
-    })
+        message: "success",
+      });
+    } catch (e) {
+      console.error(e);
+      return NextResponse.json({
+        status: 500,
+        error: "Something went wrong",
+      });
+    }
 }
