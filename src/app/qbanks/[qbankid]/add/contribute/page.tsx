@@ -1,18 +1,17 @@
 import React from "react";
-import { questionBankTable, questionTable } from "@/lib/schema/questions";
-import AddQuestionForm from "./_components/AddQuestionForm";
+import { questionBankTable } from "@/lib/schema/questions";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import AddQuestionForm from "../_components/AddQuestionForm";
 
-type AddQuestionPageProps = {
+type AddContributePageProps = {
   params: {
     qbankid: string;
   };
 };
 
-const AddQuestionPage = async ({ params }: AddQuestionPageProps) => {
-  // fetch question bank by id
+const AddContributePage = async ({ params }: AddContributePageProps) => {
   const questionbank = await db.query.questionBankTable.findFirst({
     where: eq(questionBankTable.id, params.qbankid),
     columns: {
@@ -20,15 +19,14 @@ const AddQuestionPage = async ({ params }: AddQuestionPageProps) => {
     },
   });
 
-  if (questionbank === undefined) {
+  if (!questionbank) {
     return notFound();
   }
-
   return (
     <div>
-      <AddQuestionForm questionBankId={params.qbankid} />
+      <AddQuestionForm isContribute questionBankId={params.qbankid} />
     </div>
   );
 };
 
-export default AddQuestionPage;
+export default AddContributePage;

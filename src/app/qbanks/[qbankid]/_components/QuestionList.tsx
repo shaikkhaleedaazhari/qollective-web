@@ -79,7 +79,7 @@ const Question = ({ question }: QuestionProps) => {
       <div className="grid grid-cols-2 gap-2.5">
         <Button
           onClick={() => {
-            deleteMutation.mutateAsync();
+            deleteMutation.mutate();
           }}
           variant="destructive"
           disabled={deleteMutation.isPending}

@@ -16,6 +16,7 @@ type QuestionBankPageProps = {
 };
 
 const QuestionBankPage = async ({ params }: QuestionBankPageProps) => {
+  // fetch question bank by id
   const questionBank = await db.query.questionBankTable.findFirst({
     where: eq(questionBankTable.id, params.qbankid),
     with: {
@@ -25,9 +26,10 @@ const QuestionBankPage = async ({ params }: QuestionBankPageProps) => {
     },
   });
 
-  if (!questionBank) {
+  if (questionBank === undefined) {
     return notFound();
   }
+
   return (
     <div>
       <div className="text-center space-y-3 py-4 px-4">

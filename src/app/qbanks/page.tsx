@@ -1,10 +1,7 @@
-import { ScrollArea } from '@/components/ui/scroll-area'
-import React from 'react'
-import QuestionBankCard from './_components/QuestionBankCard'
-import SearchBar from './_components/SearchBar'
+import React from "react";
+import QuestionBankCard from "./_components/QuestionBankCard";
+import SearchBar from "./_components/SearchBar";
 import { db } from "@/lib/db";
-import { eq } from "drizzle-orm";
-import { questionBankTable } from "@/lib/schema/questions";
 
 type QuestionBankPageProps = {
   searchParams: {
@@ -14,6 +11,7 @@ type QuestionBankPageProps = {
 };
 
 const QuestionBankPage = async ({ searchParams }: QuestionBankPageProps) => {
+  // fetch qbanks from db
   const qbanks = await db.query.questionBankTable.findMany({
     with: {
       questions: true,
@@ -22,20 +20,24 @@ const QuestionBankPage = async ({ searchParams }: QuestionBankPageProps) => {
     },
   });
 
+  // filter qbanks based on search params
   const filteredQbanks = qbanks.filter((qbank) => {
+    let condition = true;
     if (searchParams.exam) {
-      return qbank.examType.examName === searchParams.exam;
+      condition = qbank.examType.examName === searchParams.exam;
     }
 
     if (searchParams.search) {
-      return qbank.name
+      condition = qbank.name
         .toLowerCase()
         .includes(searchParams.search.toLowerCase());
     }
-    return true;
+    return condition;
   });
 
+  // fetch exam types from db
   const examTypes = await db.query.examTypeTable.findMany();
+
   return (
     <div className="mt-4">
       <SearchBar
@@ -57,4 +59,4 @@ const QuestionBankPage = async ({ searchParams }: QuestionBankPageProps) => {
   );
 };
 
-export default QuestionBankPage
+export default QuestionBankPage;

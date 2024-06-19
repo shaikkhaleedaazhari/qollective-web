@@ -7,7 +7,10 @@ import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
+  // parse body
   const reqBody = await req.json();
+
+  // check if user is authenticated
   const auth = await getServerUser();
   if (!auth?.user) {
     return NextResponse.json({ message: "unauthorized" }, { status: 401 });
@@ -24,6 +27,7 @@ export const POST = async (req: NextRequest) => {
   // save to db
   const data = parsedBody.data;
 
+  // check if question bank exists
   const questionBank = await db.query.questionBankTable.findFirst({
     where: eq(questionBankTable.id, data.questionBankId),
     columns: {
@@ -40,7 +44,10 @@ export const POST = async (req: NextRequest) => {
   }
 
   if (questionBank.userId !== auth.user.id) {
-    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { message: "Unauthorized to add question" },
+      { status: 401 }
+    );
   }
 
   // save to db
@@ -59,7 +66,7 @@ export const POST = async (req: NextRequest) => {
       question: data.question,
       questionBankId: data.questionBankId,
       type: data.type,
-      options: data.options ?? null,
+      options: null,
     });
   } else {
     return NextResponse.json(

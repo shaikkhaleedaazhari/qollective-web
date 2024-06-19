@@ -16,20 +16,23 @@ export default function SearchBar({
   searchTerm,
   examType,
 }: SearchBarProps) {
-  const queryParams = useSearchParams();
   const router = useRouter();
   const [search, setSearch] = useState(searchTerm);
   const debouncedSearch = useDebounce(search, 250);
 
+  // update search query param
   useEffect(() => {
     const url = new URL(window.location.href);
     if (debouncedSearch !== "") {
+      // set search query param
       url.searchParams.set("search", debouncedSearch);
     } else {
+      // remove search query param
       url.searchParams.delete("search");
     }
     router.push(url.pathname + url.search);
   }, [debouncedSearch, router]);
+
   return (
     <div className="flex gap-4">
       <Input

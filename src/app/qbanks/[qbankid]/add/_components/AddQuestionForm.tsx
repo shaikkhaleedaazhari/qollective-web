@@ -15,7 +15,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { questionTable } from "@/lib/schema/questions";
 import { commonQuestionSchema, questionTypes } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -28,11 +27,15 @@ import { z } from "zod";
 
 type AddQuestionFormType = {
   questionBankId: string;
+  isContribute?: boolean;
 };
 
 type CommonQuestionSchemaType = z.infer<typeof commonQuestionSchema>;
 
-const AddQuestionForm = ({ questionBankId }: AddQuestionFormType) => {
+const AddQuestionForm = ({
+  questionBankId,
+  isContribute,
+}: AddQuestionFormType) => {
   const router = useRouter();
   const form = useForm<CommonQuestionSchemaType>({
     resolver: zodResolver(commonQuestionSchema),
@@ -43,9 +46,11 @@ const AddQuestionForm = ({ questionBankId }: AddQuestionFormType) => {
     },
   });
 
+  const url = isContribute ? "/api/question/contribute" : "/api/question";
+
   const mutation = useMutation({
     mutationFn: async (data: CommonQuestionSchemaType) => {
-      return (await axios.post("/api/question", data)).data;
+      return (await axios.post(url, data)).data;
     },
 
     onSuccess: () => {
