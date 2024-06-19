@@ -55,7 +55,11 @@ const AddQuestionForm = ({
 
     onSuccess: () => {
       router.refresh();
-      router.push(`/qbanks/${questionBankId}`);
+      if (isContribute) {
+        router.push(`/qbanks/${questionBankId}`);
+      } else {
+        router.push(`/qbanks/${questionBankId}`);
+      }
     },
   });
 

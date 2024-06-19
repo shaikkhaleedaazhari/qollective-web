@@ -3,7 +3,7 @@ import { questionBankTable, questionTable } from "@/lib/schema/questions";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
-import EditQuestionForm from "../_components/EditQuestionForm";
+import EditQuestionForm from "../../_components/EditQuestionForm";
 import { getServerUser } from "@/lib/auth";
 
 type AddQuestionPageProps = {
@@ -13,7 +13,7 @@ type AddQuestionPageProps = {
   };
 };
 
-const AddQuestionPage = async ({ params }: AddQuestionPageProps) => {
+const EditContributionPage = async ({ params }: AddQuestionPageProps) => {
   const auth = await getServerUser();
   if (!auth?.user) {
     return redirect("/login");
@@ -24,13 +24,16 @@ const AddQuestionPage = async ({ params }: AddQuestionPageProps) => {
     columns: {
       id: true,
     },
+    with: {
+      userId: true,
+    },
   });
 
   const question = await db.query.questionTable.findFirst({
     where: eq(questionTable.id, params.questionid),
   });
 
-  if (!questionbank || !question) {
+  if (!questionbank || !question || questionbank.userId.id === auth.user.id) {
     return notFound();
   }
   return (
@@ -38,9 +41,10 @@ const AddQuestionPage = async ({ params }: AddQuestionPageProps) => {
       <EditQuestionForm
         prevQuestion={question}
         questionBankId={params.qbankid}
+        isContribute
       />
     </div>
   );
 };
 
-export default AddQuestionPage;
+export default EditContributionPage;

@@ -5,23 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { questionTable } from "@/lib/schema/questions";
 import { isDifferent } from "@/lib/utils";
-import {
-  Question,
-  commonQuestionSchema,
-  questionTypes,
-} from "@/lib/validation";
+import { Question, commonQuestionSchema } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -31,9 +17,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-type AddQuestionFormType = {
+type EditQuestionFormType = {
   questionBankId: string;
   prevQuestion: Question;
+  isContribute?: boolean;
 };
 
 type CommonQuestionSchemaType = z.infer<typeof commonQuestionSchema>;
@@ -41,7 +28,8 @@ type CommonQuestionSchemaType = z.infer<typeof commonQuestionSchema>;
 const EditQuestionForm = ({
   questionBankId,
   prevQuestion,
-}: AddQuestionFormType) => {
+  isContribute,
+}: EditQuestionFormType) => {
   const router = useRouter();
   const form = useForm<CommonQuestionSchemaType>({
     resolver: zodResolver(commonQuestionSchema),
@@ -53,15 +41,22 @@ const EditQuestionForm = ({
       options: prevQuestion.options as (string | undefined)[] | undefined,
     },
   });
+  const url = isContribute
+    ? `/api/question/contribute/${prevQuestion.id}`
+    : `/api/question/${prevQuestion.id}`;
 
   const mutation = useMutation({
     mutationFn: async (data: CommonQuestionSchemaType) => {
-      return (await axios.patch(`/api/question/${prevQuestion.id}`, data)).data;
+      return (await axios.patch(url, data)).data;
     },
 
     onSuccess: () => {
       router.refresh();
-      router.push(`/qbanks/${questionBankId}`);
+      if (isContribute) {
+        router.push(`/qbanks/${questionBankId}`);
+      } else {
+        router.push(`/qbanks/${questionBankId}`);
+      }
     },
   });
 

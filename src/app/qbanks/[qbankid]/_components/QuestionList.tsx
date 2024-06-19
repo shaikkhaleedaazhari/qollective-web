@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { questionTable } from "@/lib/schema/questions";
+import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { revalidatePath } from "next/cache";
@@ -19,9 +20,10 @@ type Question = typeof questionTable.$inferSelect;
 
 type QuestionListProps = {
   questions: Question[];
+  userType: "anon" | "author" | "user";
 };
 
-const QuestionList = ({ questions }: QuestionListProps) => {
+const QuestionList = ({ questions, userType }: QuestionListProps) => {
   return (
     <div className="mt-4">
       <Accordion type="single" collapsible className="w-full">
@@ -31,7 +33,7 @@ const QuestionList = ({ questions }: QuestionListProps) => {
               {i + 1}. {question.question}
             </AccordionTrigger>
             <AccordionContent className="text-left">
-              <Question question={question} />
+              <Question userType={userType} question={question} />
             </AccordionContent>
           </AccordionItem>
         ))}
@@ -42,9 +44,10 @@ const QuestionList = ({ questions }: QuestionListProps) => {
 
 type QuestionProps = {
   question: Question;
+  userType: "anon" | "author" | "user";
 };
 
-const Question = ({ question }: QuestionProps) => {
+const Question = ({ question, userType }: QuestionProps) => {
   const router = useRouter();
   const [show, setShow] = useState(false);
   const deleteMutation = useMutation({
@@ -76,21 +79,36 @@ const Question = ({ question }: QuestionProps) => {
           ? `option ${Number(question.correctAnswer[0]) + 1}`
           : "Show Answer"}
       </Button>
-      <div className="grid grid-cols-2 gap-2.5">
-        <Button
-          onClick={() => {
-            deleteMutation.mutate();
-          }}
-          variant="destructive"
-          disabled={deleteMutation.isPending}
-        >
-          Delete
-        </Button>
-        <Button asChild className="">
-          <Link href={`/qbanks/${question.questionBankId}/edit/${question.id}`}>
-            Edit
-          </Link>
-        </Button>
+      <div
+        className={cn(
+          "grid grid-cols-1 gap-2.5",
+          userType === "author" && "grid-cols-2"
+        )}
+      >
+        {userType === "author" && (
+          <Button
+            onClick={() => {
+              deleteMutation.mutate();
+            }}
+            variant="destructive"
+            disabled={deleteMutation.isPending}
+          >
+            Delete
+          </Button>
+        )}
+        {userType !== "anon" && (
+          <Button asChild className="">
+            <Link
+              href={
+                userType === "author"
+                  ? `/qbanks/${question.questionBankId}/edit/${question.id}`
+                  : `/qbanks/${question.questionBankId}/edit/${question.id}/contribute`
+              }
+            >
+              {userType === "author" ? "Edit" : "Contribute as Edit"}
+            </Link>
+          </Button>
+        )}
       </div>
     </div>
   );

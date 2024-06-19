@@ -3,7 +3,8 @@ import { questionBankTable, questionTable } from "@/lib/schema/questions";
 import AddQuestionForm from "./_components/AddQuestionForm";
 import { db } from "@/lib/db";
 import { eq } from "drizzle-orm";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getServerUser } from "@/lib/auth";
 
 type AddQuestionPageProps = {
   params: {
@@ -12,6 +13,11 @@ type AddQuestionPageProps = {
 };
 
 const AddQuestionPage = async ({ params }: AddQuestionPageProps) => {
+  const auth = await getServerUser();
+  if (!auth?.user) {
+    return redirect("/login");
+  }
+
   // fetch question bank by id
   const questionbank = await db.query.questionBankTable.findFirst({
     where: eq(questionBankTable.id, params.qbankid),

@@ -75,17 +75,73 @@ export const questionTable = mysqlTable("question", {
   updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
 });
 
-export const questionBankRelation = relations(questionBankTable, ({ one, many }) => ({
-  examType: one(examTypeTable, {
-    fields: [questionBankTable.examType],
-    references: [examTypeTable.id],
-  }),
-  userId: one(userTable, {
-    fields: [questionBankTable.userId],
-    references: [userTable.id],
-  }),
-  questions: many(questionTable),
-}));
+
+export const contributionTable = mysqlTable("contributions", {
+  id: varchar("id", {
+    length: 255,
+  })
+    .$defaultFn(createId)
+    .primaryKey(),
+  questionBankId: varchar("question_bank_id", {
+    length: 255,
+  })
+    .notNull()
+    .references(() => questionBankTable.id),
+  type: mysqlEnum("type", ["MCQ", "MSQ", "NUMERIC"]).notNull(),
+  question: text("question").notNull(),
+  options: json("options").$type<string[]>(),
+  correctAnswer: json("correct_answer").$type<string[]>().notNull(),
+  contributionType: mysqlEnum("contribution_type", [
+    "create",
+    "edit",
+  ]).notNull(),
+  contributorId: varchar("contributor_id", {
+    length: 255,
+  })
+    .notNull()
+    .references(() => userTable.id),
+  prevQuestionId: varchar("prev_question", {
+    length: 255,
+  })
+    .references(() => questionTable.id)
+    .notNull(),
+  status: mysqlEnum("status", ["pending", "approved", "rejected"]).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().onUpdateNow(),
+});
+
+export const questionBankRelation = relations(
+  questionBankTable,
+  ({ one, many }) => ({
+    examType: one(examTypeTable, {
+      fields: [questionBankTable.examType],
+      references: [examTypeTable.id],
+    }),
+    userId: one(userTable, {
+      fields: [questionBankTable.userId],
+      references: [userTable.id],
+    }),
+    questions: many(questionTable),
+  })
+);
+
+export const contributionTableRelation = relations(
+  contributionTable,
+  ({ one }) => ({
+    questionBank: one(questionBankTable, {
+      fields: [contributionTable.questionBankId],
+      references: [questionBankTable.id],
+    }),
+    contributor: one(userTable, {
+      fields: [contributionTable.contributorId],
+      references: [userTable.id],
+    }),
+    prevQuestion: one(questionTable, {
+      fields: [contributionTable.prevQuestionId],
+      references: [questionTable.id],
+    }),
+  })
+);
 
 export const questionTableRelation = relations(questionTable, ({ one }) => ({
   questionBank: one(questionBankTable, {
