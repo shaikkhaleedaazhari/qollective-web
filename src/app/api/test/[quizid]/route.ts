@@ -42,8 +42,6 @@ export const POST = async (
     }
   });
 
-  console.log(mark);
-
   await db.update(quizTable).set({
     data: data.data,
     status: "finished",

@@ -29,10 +29,21 @@ export const DELETE = async (
       id: true,
       questionBankId: true,
     },
+    with: {
+      questionBank: {
+        columns: {
+          userId: true,
+        },
+      },
+    },
   });
 
   if (!question) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+
+  if (question.questionBank.userId !== auth.user.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const res = await db

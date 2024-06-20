@@ -71,7 +71,7 @@ const LoginPage: React.FC<LoginPageProps> = () => {
           <div>
             <Input
               type="password"
-              placeholder="Create password"
+              placeholder="Enter password"
               {...form.register("password")}
             />
             {form.formState.errors.password && (
