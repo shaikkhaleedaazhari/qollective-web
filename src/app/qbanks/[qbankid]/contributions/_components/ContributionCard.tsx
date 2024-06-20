@@ -69,7 +69,8 @@ const ContributionCard = ({ contribution }: ContributionCardProps) => {
                 ))}
               </div>
               <p className="mt-2">
-                Answer: option {contribution.prevQuestion.correctAnswer[0]}
+                Answer: option{" "}
+                {Number(contribution.prevQuestion.correctAnswer) + 1}
               </p>
             </div>
           )}

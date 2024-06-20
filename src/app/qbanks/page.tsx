@@ -22,9 +22,10 @@ const QuestionBankPage = async ({ searchParams }: QuestionBankPageProps) => {
 
   // filter qbanks based on search params
   const filteredQbanks = qbanks.filter((qbank) => {
+    let stringCondition = true;
     let condition = true;
     if (searchParams.exam) {
-      condition = qbank.examType.examName === searchParams.exam;
+      stringCondition = qbank.examType.examName === searchParams.exam;
     }
 
     if (searchParams.search) {
@@ -32,7 +33,7 @@ const QuestionBankPage = async ({ searchParams }: QuestionBankPageProps) => {
         .toLowerCase()
         .includes(searchParams.search.toLowerCase());
     }
-    return condition;
+    return condition && stringCondition;
   });
 
   // fetch exam types from db
