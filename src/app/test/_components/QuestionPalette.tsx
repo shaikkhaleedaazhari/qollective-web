@@ -10,6 +10,11 @@ type QuestionPaletteProps = {
   currentIndex: number;
   loading: boolean;
   goToIndex: (index: number) => void;
+  time: {
+    hours: number;
+    minutes: number;
+    seconds: number;
+  };
 };
 
 const QuestionPalette = ({
@@ -17,11 +22,19 @@ const QuestionPalette = ({
   currentIndex,
   loading,
   goToIndex,
+  time,
 }: QuestionPaletteProps) => {
   const [ref, { width, height }] = useMeasure();
   return (
     <div className="h-full border-l border-gray-400 p-4 flex flex-col gap-4">
-      <h3 className="font-medium text-xl">Question Palette</h3>
+      <div className="flex items-center justify-between">
+        <h3 className="font-medium text-xl">Question Palette</h3>
+        <p className="mr-4 text-2xl tracking-widest">
+          {String(time.hours).padStart(2, "0")}:
+          {String(time.minutes).padStart(2, "0")}:
+          {String(time.seconds).padStart(2, "0")}
+        </p>
+      </div>
       <div className="flex-1  overflow-y-auto">
         <div
           ref={ref}

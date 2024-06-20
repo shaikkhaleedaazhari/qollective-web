@@ -25,7 +25,11 @@ const QuizPage = async ({ params }: QuizPageProps) => {
   return (
     <main className="h-screen flex flex-col">
       <Header />
-      <QuizBody quizId={params.quizid} questions={quiz.data} />
+      <QuizBody
+        quizId={params.quizid}
+        minutes={quiz.minutes}
+        questions={quiz.data}
+      />
     </main>
   );
 };

@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@bradgarropy/use-countdown": "^2.0.1",
     "@hookform/resolvers": "^3.3.4",
     "@lucia-auth/adapter-drizzle": "^1.0.7",
     "@lucia-auth/adapter-mysql": "^3.0.2",

@@ -7,13 +7,14 @@ import useQuiz from "@/hooks/useQuiz";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-
+import { useCountDown } from "@/hooks/useCountDown";
 type QuizBodyProps = {
   questions: QuizQuestion[];
   quizId: string;
+  minutes: number;
 };
 
-const QuizBody = ({ questions, quizId }: QuizBodyProps) => {
+const QuizBody = ({ questions, quizId, minutes }: QuizBodyProps) => {
   const router = useRouter();
   const {
     currentQuizIndex,
@@ -45,6 +46,10 @@ const QuizBody = ({ questions, quizId }: QuizBodyProps) => {
     },
   });
 
+  const countdown = useCountDown(minutes * 60, 1000, mutation.mutate);
+
+  console.log(countdown);
+
   console.log(currentQuizIndex);
   return (
     <>
@@ -60,6 +65,11 @@ const QuizBody = ({ questions, quizId }: QuizBodyProps) => {
         </div>
         <div className="">
           <QuestionPalette
+            time={{
+              hours: countdown.hours,
+              minutes: countdown.minutes,
+              seconds: countdown.seconds,
+            }}
             goToIndex={goToIndex}
             loading={mutation.isPending}
             currentIndex={currentQuizIndex}
