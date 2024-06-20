@@ -1,8 +1,13 @@
 "use client"
 
-import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { userTable } from "@/lib/schema/auth";
-import { questionBankTable, questionTable } from "@/lib/schema/questions";
+import {
+  examTypeTable,
+  questionBankTable,
+  questionTable,
+} from "@/lib/schema/questions";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,6 +17,7 @@ type QuestionBankCardProps = {
   questionBank: typeof questionBankTable.$inferSelect & {
     questions: (typeof questionTable.$inferSelect)[];
     userId: typeof userTable.$inferSelect;
+    examType: typeof examTypeTable.$inferSelect;
   };
 };
 const QuestionBankCard = ({ questionBank }: QuestionBankCardProps) => {
@@ -22,7 +28,14 @@ const QuestionBankCard = ({ questionBank }: QuestionBankCardProps) => {
           <div className="flex gap-4">
             <div className="flex justify-between flex-grow">
               <div className="space-y-1">
-                <h3 className="text-2xl font-semibold">{questionBank.name}</h3>
+                <div className="flex gap-2 items-center">
+                  <h3 className="text-2xl font-semibold">
+                    {questionBank.name}
+                  </h3>
+                  <Badge className="h-fit">
+                    {questionBank.examType.examName}
+                  </Badge>
+                </div>
                 <p className="text-sm text-gray-700">
                   {questionBank.subject} · {questionBank.questions.length}{" "}
                   Questions · created at:{" "}
