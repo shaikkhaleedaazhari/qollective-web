@@ -116,7 +116,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
             <Button type="submit" className="w-full">
               Sign Up
             </Button>
-            <div className="flex items-center justify-center">
+            {/* <div className="flex items-center justify-center">
               <span className="text-sm text-gray-500 mr-2">
                 OR CONTINUE WITH
               </span>
@@ -128,7 +128,7 @@ const CreateAccount: React.FC<CreateAccountProps> = () => {
                 <FaGoogle className="mr-2" />
                 Google
               </Button>
-            </div>
+            </div> */}
             <div className="text-center">
               <span className="text-sm text-gray-500">
                 Have an account?{" "}
