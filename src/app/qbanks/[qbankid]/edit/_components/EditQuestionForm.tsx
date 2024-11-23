@@ -99,6 +99,9 @@ const EditQuestionForm = ({
           <p className="text-red-500">{form.formState.errors.root.message}</p>
         </div>
       )}
+      <h1 className="font-semibold text-3xl">
+        {isContribute ? "Contribute Edit" : "Edit Question"}
+      </h1>
       <div className="space-y-2">
         <Label>Question</Label>
         <Textarea {...form.register("question")} />

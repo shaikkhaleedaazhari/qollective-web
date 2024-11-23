@@ -89,6 +89,9 @@ const AddQuestionForm = ({
   });
   return (
     <form className="space-y-4 px-4 py-8" onSubmit={handleSubmit}>
+      <h1 className="font-semibold text-3xl">
+        {isContribute ? "Contribute Question" : "Add Question"}
+      </h1>
       <div className="space-y-2">
         <Label>Question</Label>
         <Textarea {...form.register("question")} />
