@@ -3,6 +3,8 @@ import * as questionSchema from "./schema/questions";
 import * as authSchema from "./schema/auth";
 import mysql from "mysql2/promise";
 
+DB_URI=""
+
 function singleton<Value>(name: string, value: () => Value): Value {
   const globalAny: any = global;
   globalAny.__singletons = globalAny.__singletons || {};
